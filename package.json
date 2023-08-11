@@ -1,0 +1,11 @@
+{
+  "name": "arbolino",
+  "version": "1.0.0",
+  "dependencies": {
+    "ethereum-multicall": "^2.19.0",
+    "ethers": "^5.7.2"
+  },
+  "devDependencies": {
+    "dotenv": "^16.3.1"
+  }
+}

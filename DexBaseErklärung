@@ -1,0 +1,65 @@
+
+==> Konstruktor der class DexBase:
+
+Es wird ein Konstruktor initialisiert, der aus dem ethereum.js --> config.js die ganzen Daten übergeben bekommt. Die Provider, tokens, pools,
+tradingSymbols, maxSwapNumber.
+    - Ein Objekt (this.web3) wird erstellt, dass den Provider beinhaltet.
+    - Ein Array (this.chainsList) wird erstellt, dass alle Namen der Chains beinhaltet.         console.log(this.chainsList) = ['ethereum']
+    - Ein Array (this.exchangesList) wird erstellt, dass alle namen der Dex´es beinhaltet.      console.log(this.exchangesList) = [ 'sushiswap', 'uniswap' ]
+    - Ein Array (this.tokensList) wird erstellt, das alle Namen der Tokens beinhaltet.          console.log(this.tokensList) = [ 'BTC', 'DAI', 'ETH', 'PEPE', 'USDC', 'USDT' ]
+    - Ein Objekt (this.chainToId) wird erstellt, das allen chains einen Index zuweist.          console.log(this.chain_to_id['ethereum']) = 0
+    - Ein Objekt (this.exchangeToId) wird erstellt, das allen exchanges einen Index zuweist.
+    - Ein Objekt (this.tokentoId) wird erstellt, das allen Tokens einen Index zuweist.
+    - Ein 6 dimensionales Array (this.storageArray) wird erstelllt, um die Daten zu speichern.
+            1 dimension = chains
+            2 dimension = exchanges
+            3 dimension = token in
+            4 dimension = token out
+            5 dimension = uniswap variant version: 2, 3  => Länge 2
+            6 dimension = decimals0, decimals1, reserve0, reserve1, sqrtPriceX96, fee, token0_is_input, pool_index
+
+
+
+==> Folgende Mappings sind erstellt:
+
+    -this.chainToId = Ein mapping das allen Chain Namen einen Index zuweist. key = [chain]
+        { ethereum: 0 }
+
+    -this.exchangeToId = ein mapping das allen exchanges einen Index zuweist. key = [exchange]
+        { sushiswap: 0, uniswap: 1 }
+
+    -this.tokenToId = Ein mapping das allen Tokens einen Index zuweist. key = [token]
+        { BTC: 0, DAI: 1, ETH: 2, PEPE: 3, USDC: 4, USDT: 5 }
+
+    -this.storageIndex = enthält alle möglichen Indizes vom this.storageArray.
+
+==> Methode getIndex(chain, exchange, token0, token1, version):
+    Diese Methode gibt jeweils die Indizes der Übergabeparameter zurück in dessen Mappings.
+
+    Beispiel:
+
+     let idx1 = this.getIndex(chain, exchange, token0, token1, 2);      gibt diese Indizes aus : [ 0, 0, 2, 5, 0 ]
+
+
+     let idx2 = [idx1[0], idx1[1], idx1[3], idx1[2], idx1[4]];          Tauscht die Indizes der token0 und token1, weil es kann ja
+                                                                        durch den gleichen Pool ETH/USDT und USDT/ETH getauscht werden.
+
+==> Methode _loadPoolData()
+    Diese Methode fragt mit einem Multicall alle Pool Daten die in ethereum.js definiert sind ab, anhand der ABI der Funktionen des Smart contracts der
+    jeweiligen Pools. Für Uniswap/Sushiswap V2 ist es getReserves() und für Uniswap/SuhsiswapV3 ist es slot0() was eine Quadratwurzel zurückgibt und
+    diese dann im Storage Array speichert. Mit dieser Methode wird das Storage Array gefüllt mit allen aktuellen Daten der Pools.
+
+==> Methode _generateSwapPath()
+        - Es wird ein leeres Objekt "tokenInOut" erstellt, dieses Objekt wird später mit den Handelssymbolen als Schlüssel und den zugehörigen Token-IDs
+        als Wert gefüllt.
+        - Mit einer for-of Schleife wird über "this.tradingSymbols" iteriert. Für jedes Symbol in dieser Liste werden die Paare mit symbol.split("/")
+        geteilt.  console.log(tokenInOut); ==> { 'ETH/USDT': [ 5, 2 ] } !!!!INDEXE beachten, sind vertauscht.!!!!!
+
+
+
+
+
+
+
+
+

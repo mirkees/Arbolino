@@ -1,0 +1,29 @@
+
+Konstruktor der class DexStream:
+
+Es wird ein Konstruktor initialisiert, der eine Instanz der Dex Klasse übergeben bekommt.
+        - Einen publisher => noch keine Ahnung für was der gut ist.
+        - Einen messageFormatter => noch keine Ahnung für was der gut ist.
+        - Einen debug => noch keine Ahnung für was der gut ist.
+
+
+Methode streamV2Events:
+
+Diese Methode streamt alle swaps der trading Paare die in ethereum.js mit der Version 2 festgelegt sind und
+aktualisiert die Werte im Storage Array anhand dieser Methoden.
+    -updateReserves()
+    -getSymbolsToUpdate()
+    -updatePriceSymbols()
+
+    - Das Event ('Sync(uint112,uint112)') ist im UniswapV2Pair Contract und löst aus, sobald ein swap in einem Pool gemacht wurde
+    und signalisiert das die Pool Reserven ein update erhalten haben. Was einem Neuen Preis des Trading Pairs bedeutet, weil die Preise
+    durch das Verhältnis der beiden paare bestimmt werden wird.
+    - Durch den ethers.utils.defaultAbiCoder werden die hexadezimal Daten decodet
+
+
+
+
+Die Methode filtert zuerst alle Pools die Version 2 sind, mapped die Pools mit dem Key der Pool Adressen und .toLowerCase().
+Anschließend einen syncEventSelector der das event ('Sync(uint112,uint112)') aus dem UniswapV2Pair Contract abhört.
+Anschließend wird ein Websocket Provider initalisiert und durch provider.on wird dan anhand dem filter ( syncEventSelector ) die contracts abgehört
+und die Daten extrahiert die benötigt werden um die Reserven up to date zu halten.
